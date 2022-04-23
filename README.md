@@ -13,7 +13,7 @@ If you find a bug in an implemented command or would like to request a new plann
 | stop   | `$stop`                | Stop playing current audio. |
 | save   | `$save [attachment]`   | Save attached mp3 into audio bank. |
 | load   | `$load "[mp3 name]"`   | Play `[mp3 name].mp3` from audio bank in voice chat. |
-| get    | `$get "[mp3 name]"`    | Receive [mp3 name].mp3 from audio bank as attachment. |
+| get    | `$get "[mp3 name]"`    | Receive `[mp3 name].mp3` from audio bank as attachment. |
 | list   | `$list`                | List all files in audio bank. |
 | delete | `$delete "[mp3 name]"` | Delete `[mp3 name].mp3` from audio bank. |
 
