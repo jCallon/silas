@@ -1,0 +1,2 @@
+Feel free to put any authenication information you need, such as passwords and auth tokens, in the directory! Or do it a smarter way, like environment varaibles. I am relatively new/bad at Python.
+DO NOT PUSH ANYTHING IN THIS DIRECTORY!

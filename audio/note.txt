@@ -1,0 +1,3 @@
+Please place mp3 files to load here.
+Their file names should only contain lower-case ascii letter, spaces, and numbers. This is so that the file names are both human-speakable and unexpliotable by special characters, such as /.
+I would strongly recommend against pushing any files in here, unless you're sure you own rights to all the audio pushed.
