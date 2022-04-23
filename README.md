@@ -1,5 +1,5 @@
 # Pfitzer 1.0.0
-> Hello, I am Pfitzer, the bot you can hear!
+> Hello, I am Silas, the bot you can hear!
 
 After getting your own bot token, run `python main.py` to start the bot.
 
