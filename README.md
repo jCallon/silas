@@ -24,5 +24,5 @@ If you find a bug in an implemented command or would like to request a new plann
 | tts    | `$tts [text]`          | Say [text] in voice chat. |
 | lang   | `$lang [IETF code]`    | Set your desired language for TTS. |
 | listen | `$listen`              | Let bot listen to you for voice commands. |
-| ignore | `$ignore`              | Do not let bot listen to you. This is default. |
+| ignore | `$ignore`              | Do not let bot listen to your voice. This is default. |
 | toggle | `$toggle "[mp3 name]"` | Toggle if [mp3 name].mp3 can be invoked by voice command. |
