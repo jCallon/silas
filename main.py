@@ -4,10 +4,12 @@ from discord.ext import commands
 import logging
 import json
 import re
-#import youtube_dl
 #from gtts import gTTS
 #from io import BytesIO
+
+#Import files
 import file_list
+from youtube import YTDLSource
 
 # Define logging
 logging.basicConfig(level=logging.INFO)
@@ -25,7 +27,7 @@ bot = commands.Bot(command_prefix="$")
 async def join(ctx):
     # Author must have a voice connection to join
     if type(ctx.author) != discord.Member or ctx.author.voice == None:
-        await ctx.send("You must be in a guild voice chat and use \join from a guild text chat.")
+        await ctx.send("You must be in a guild voice chat and use $join from a guild text chat.")
         return
     # If in a voice channel already, leave it
     if len(bot.voice_clients) != 0:
@@ -64,22 +66,15 @@ async def stop(ctx):
 #------#
 # play #
 #------#
-#@bot.command()
-#async def play(ctx, url):
-#    #match = re.search(r"\Ahttps://(www.youtube.com/watch?v=)|(youtu.be/)[a-zA-Z0-9]+", url)
-#    #if match == None:
-#        #await ctx.send("I don't understand the format of that link. Did you copy the full link?")
-#
-#    # Copied instructions from https://www.youtube.com/watch?v=MbhXIddT2YY
-#    #server = ctx.message.server
-#    #voice_client = bot.voice_client_in(server)
-#    #player = await voice_client.create_ytdl_player(link)
-#    #players[server.id] = player
-#    #player.start()
-#
-#    # Get Youtube video, but don't predownload it (stream=True)
-#    player = await YTDLSource.from_url(url, stream=True)
-#    voice_client.play(player)
+@bot.command()
+async def play(ctx, url):
+    if len(bot.voice_clients) == 0:
+        await ctx.send("I'm not in a voice channel to play the Youtube link in.")
+        return
+
+    # Get Youtube video, but don't predownload it (stream=True)
+    player = await YTDLSource.from_url(url, stream=True)
+    bot.voice_clients[0].play(player)
 
 #-----#
 # tts #
