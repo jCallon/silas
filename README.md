@@ -10,12 +10,15 @@ Join a guild voice channel. From a guild text channel, send `$join`. From here, 
 - Stop a sound any time with `$stop`.
 
 ### TTS
-WIP
+- To say anything, just type `$tts [anything]`.
+- To change your preferences, there's `$tts_name`, `$tts_lang`, and `$tts_accent`.
 
 ### Using voice commands
-WIP
+- To respect privacy, Silas will not listen to you unless you opt in to be listened to. Enable or disable listening with `$listen` and `$deafen`.
+- Actually getting voice commands to work is a WIP.
 
 ## Running Silas
+I NEED TO UPDATE THIS - see requirements.txt
 After getting your own Discord bot token and making the code point at it, run `python3 main.py` to start the bot. To get the dependancies it'll complain about I recommend...
 1. Make a virtual environment: `python3 -m venv bot-env`
 2. Activate virtual environment: Linux `source bot-env/bin/activate`, Windows `bot-env\Scripts\activate.bat`
@@ -29,7 +32,6 @@ After getting your own Discord bot token and making the code point at it, run `p
 If you find a bug in an implemented command or would like to request a new planned command, please file an Issue and label it appropriately.
 
 ## Full command list
-### Implemented
 | Name   | Syntax                       | Description |
 | ------ | ---------------------------- | ----------- |
 | join   | `$join`                      | Join requester's current guild voice chat. |
@@ -41,12 +43,9 @@ If you find a bug in an implemented command or would like to request a new plann
 | list   | `$list`                      | List all files names and indexes in audio bank. |
 | delete | `$delete "[mp3 name/index]"` | Delete `[mp3 name].mp3` or index from audio bank. |
 | play   | `$play [YouTube link]`       | Play YouTube link in voice chat. |
-| tts    | `$tts [text]`                | Say "[your name] said: [text]" in voice chat. |
-
-### Planned Commands
-| Name   | Syntax                       | Description |
-| ------ | ---------------------------- | ----------- |
-| lang   | `$lang [IETF code]`          | Set your desired language for TTS. |
+| tts    | `$tts [text]`                | Say "[your name]: [text]" in voice chat. |
+| tts    | `$tts_name [preferred name]` | Change the name TTS refers to you by. |
+| tts    | `$tts_lang [IETF code]`      | Change your TTS language to [IETF code]. |
+| tts    | `$tts_accent [tld]`          | Change your TTS accent to [tld]. |
 | listen | `$listen`                    | Let bot listen to you for voice commands. |
-| ignore | `$ignore`                    | Do not let bot listen to your voice. This is default. |
-| toggle | `$toggle "[mp3 name/index]"` | Toggle if `[mp3 name].mp3` can be invoked by voice command. |
+| deafen | `$deafen`                    | Do not let bot listen to your voice. This is default. |
