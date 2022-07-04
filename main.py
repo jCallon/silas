@@ -73,10 +73,11 @@ async def leave(ctx):
 #---------------#
 # listen/deafen #
 #---------------#
+@bot.command()
 async def listen(ctx):
     my_infolette = my_member_info.get_infolette(ctx.author)
     # Inform the member if they're already being listened to for voice commands
-    if my_infolete.is_using_voice_commands == True:
+    if my_infolette.is_using_voice_commands == True:
         await ctx.send("I'm already listening for voice commands from you.")
         return
 
@@ -84,10 +85,11 @@ async def listen(ctx):
     my_member_info.add_infolette(my_infolette)
     await ctx.send("Ok, I'll start listening for voice commands from you now.")
 
+@bot.command()
 async def deafen(ctx):
     my_infolette = my_member_info.get_infolette(ctx.author)
     # Inform the member if their voice already isn't being listened to
-    if my_infolete.is_using_voice_commands == False:
+    if my_infolette.is_using_voice_commands == False:
         await ctx.send("I'm already not listening to your voice.")
         return
 
@@ -143,7 +145,7 @@ async def tts(ctx, *, arg):
     source = discord.PCMVolumeTransformer(FFmpegPCMAudio(mp3.read(), pipe=True))
     bot.voice_clients[0].play(source)
 
-@bot.command(name='tts_name')
+@bot.command()
 async def tts_name(ctx, name):
     # TODO Regex for if name is reasonable?
     # Can't really do that for multi-language, just check length?
@@ -156,7 +158,7 @@ async def tts_name(ctx, name):
 
     await ctx.send("Ok, when doing TTS for you I'll now call you '" + name + "'.")
 
-@bot.command(name='tts_lang')
+@bot.command()
 async def tts_lang(ctx, lang):
     # If Google doesn't have an AI trained for TTS in this language, I sure don't!
     if lang not in gtts.lang.tts_langs():
@@ -176,7 +178,7 @@ async def tts_lang(ctx, lang):
 
     await ctx.send("Ok, I'll use " + lang + " for your TTS.")
 
-@bot.command(name='tts_accent')
+@bot.command()
 async def tts_accent(ctx, accent=None):
     my_infolette = my_member_info.get_infolette(ctx.author)
     my_infolette.tts_accent = accent
