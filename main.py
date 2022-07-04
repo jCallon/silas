@@ -4,12 +4,13 @@ from discord.ext import commands
 import logging
 import json
 import re
-#from gtts import gTTS
-#from io import BytesIO
+from gtts import gTTS
+from io import BytesIO
 
 #Import files
 import file_list
 from youtube import YTDLSource
+from FFmpegPCMAudio import FFmpegPCMAudio
 
 # Define logging
 logging.basicConfig(level=logging.INFO)
@@ -79,16 +80,18 @@ async def play(ctx, url):
 #-----#
 # tts #
 #-----#
-#@bot.command()
-#async def tts(ctx, *, arg):
-#    if voice_client == None:
-#        await ctx.send("I'm not in a voice channel, I have nowhere to speak.")
-#        return
-#
-#    mp3 = BytesIO()
-#    tts = gTTS(text=arg, lang="en")
-#    tts.write_to_fp(mp3)
-#    voice_client.play(mp3)
+@bot.command()
+async def tts(ctx, *, arg):
+    if len(bot.voice_clients) == 0:
+        await ctx.send("I'm not in a voice channel, I have nowhere to speak.")
+        return
+
+    mp3 = BytesIO()
+    gTTS(text=arg, lang="en", tld="co.uk").write_to_fp(mp3)
+    mp3.seek(0)
+    # Use custom FFmpegPCMAudio class, copied from Armster15
+    source = discord.PCMVolumeTransformer(FFmpegPCMAudio(mp3.read(), pipe=True))
+    bot.voice_clients[0].play(source)
 
 #------#
 # save #
