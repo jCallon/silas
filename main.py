@@ -72,7 +72,6 @@ async def leave(ctx):
 #---------------#
 # listen/deafen #
 #---------------#
-# TODO right now it's listing all files not just mp3s?
 async def listen(ctx):
     my_infolette = my_member_info.get_infolette(ctx.author)
     # Inform the member if they're already being listened to for voice commands
@@ -145,8 +144,8 @@ async def tts(ctx, *, arg):
 
 @bot.command(name='tts_name')
 async def tts_name(ctx, name):
-    # TODO regex for if name is reasonable
-    # this returns by reference so modifiying the return value modifies the original :/
+    # TODO Regex for if name is reasonable?
+    # Can't really do that for multi-language, just check length?
     my_infolette = my_member_info.get_infolette(ctx.author)
     my_infolette.spoken_name = name
     # Inform the member if they're already called by their desired name for TTS
@@ -192,6 +191,7 @@ https://gtts.readthedocs.io/en/latest/module.html#localized-accents")
 #---------------------------#
 # list/save/load/delete/get #
 #---------------------------#
+# TODO right now it's listing all files not just mp3s?
 @bot.command()
 async def list(ctx):
     # Put all the mp3 files in the sound bank into a string of a index-labelled list
