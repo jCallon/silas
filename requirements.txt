@@ -13,3 +13,7 @@ pip install gTTS
 
 https://github.com/ytdl-org/youtube-dl
 pip install youtube-dl
+
+https://ffmpeg.org/
+I don't remember exactly how I did this one... I'll guess:
+apt install ffmpeg

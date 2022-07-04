@@ -1,4 +1,4 @@
-# Import libraries
+# Import public libraries
 import discord
 from discord.ext import commands
 import logging
@@ -7,11 +7,11 @@ import re
 import gtts
 from gtts import gTTS
 from io import BytesIO
+from youtube import YTDLSource
 
-#Import files
+#Import custom classes, etc
 import file_list
 from member_info import MemberInfo
-from youtube import YTDLSource
 from FFmpegPCMAudio import FFmpegPCMAudio
 
 # Define logging
@@ -19,6 +19,7 @@ logging.basicConfig(level=logging.INFO)
 # Define bot
 bot = commands.Bot(command_prefix="$")
 # Define my_member_info
+# I plan to only support once voice_client and guild at a time
 my_member_info = MemberInfo()
 
 #=================#
@@ -248,6 +249,3 @@ async def get(ctx, name):
 # LOG IN #
 #========#
 bot.run(json.load(open("auth/discord.json", "r"))["token"])
-# Initialize member info
-# I plan to only support once voice_client and guild at a time
-my_member_info.load(bot.guilds[0])

@@ -2,21 +2,25 @@ import discord
 import json
 
 class MemberInfolette:
+    # member should be a discord.member or a discord.member.id
     def __init__(self, \
             member, \
             spoken_name=None, \
             is_using_voice_commands=0, \
             tts_lang="en", \
             tts_accent="co.uk"):
-        self.member = member
+        self.id = member.id if type(member) == discord.Member else member
         if spoken_name == None:
             self.spoken_name = member.nick if type(member) == discord.Member else member.name
+        else:
+            self.spoken_name = spoken_name
         self.is_using_voice_commands = is_using_voice_commands
         self.tts_lang = tts_lang
         self.tts_accent = tts_accent
 
+    # TODO Do I need this or will 'if X in Y work'?
     def is_exact_match(self, c):
-        if c.member.id   == self.member.id and \
+        if c.id          == self.id and \
            c.spoken_name == self.spoken_name and \
            c.is_using_voice_commands == self.is_using_voice_commands and \
            c.tts_lang    == self.tts_lang and \
@@ -25,46 +29,44 @@ class MemberInfolette:
         return False
 
     def debug(self):
-        print("")
-        print(self.member.id)
-        print(self.spoken_name)
-        print(self.is_using_voice_commands)
-        print(self.tts_lang)
-        print(self.tts_accent)
+        print("{}: {} {} {} {}".format(self.id, \
+            self.spoken_name, self.is_using_voice_commands, self.tts_lang, self.tts_accent))
 
     def to_json(self):
         return {\
-            'id': str(self.member.id), \
+            'id': self.id, \
             'spoken_name': self.spoken_name, \
-            'is_using_voice_commands': str(self.is_using_voice_commands), \
+            'is_using_voice_commands': self.is_using_voice_commands, \
             'tts_lang': self.tts_lang, \
             'tts_accent': self.tts_accent}
 
 class MemberInfo:
     def __init__(self):
         self.participants = []
-
-    def load(self, guild):
         previous_session = json.load(open("member_info.json", "r"))
         for participant in previous_session:
-            self.particpants.append(MemberInfolette(\
-                guild.get_member(participant.id), \
-                participant.spoken_name, \
-                participant.voice_command_user, \
-                participant.tts_lang))
+            self.participants.append(MemberInfolette(\
+                participant["id"], \
+                participant["spoken_name"], \
+                participant["is_using_voice_commands"], \
+                participant["tts_lang"], \
+                participant["tts_accent"]))
+        # Print list to bot owner to make sure everything is in order
+        for participant in self.participants:
+            participant.debug()
 
     # Returns the member_infolette coressponding to the passed in user,
-    # if one isn't found, returns an infolette with default arguments
-    # (explicitly returns a copy instead of a reference to the original)
+    # if one isn't found, returns an infolette with default parameters
+    # (returns a copy instead of a reference to the original)
     def get_infolette(self, member):
         match = MemberInfolette(member)
         for participant in self.participants:
-            if participant.member.id == member.id:
-                match.member = participant.member
+            if participant.id == member.id:
+                match.id          = participant.id
                 match.spoken_name = participant.spoken_name
                 match.is_using_voice_commands = participant.is_using_voice_commands
-                match.tts_lang = participant.tts_lang
-                match.tts_accent = participant.tts_accent
+                match.tts_lang    = participant.tts_lang
+                match.tts_accent  = participant.tts_accent
         return match
 
     # Attempts to add a new infolette to participants, returns true if added or modified,
@@ -76,7 +78,7 @@ class MemberInfo:
                 return False
         # Case: infolette for member exists, but is slightly different, overwrite
         for i in range(len(self.participants)):
-            if self.participants[i].member.id == new_infolette.member.id:
+            if self.participants[i].id == new_infolette.id:
                 self.participants[i] = new_infolette
                 self.save()
                 return True
@@ -89,7 +91,7 @@ class MemberInfo:
     # false if it weas not found so it could not be deleted
     def remove_infolette(self, infolette):
         for i in range(len(self.participants)):
-            if self.participants[i] == infolette:
+            if self.participants[i].is_exact_match(infolette):
                 self.participants.pop(i)
                 self.save()
                 return True
@@ -100,7 +102,7 @@ class MemberInfo:
         match = []
         for participant in self.participants:
             if participant.is_using_voice_commands:
-                match += participant.member
+                match += participant.id
         return match
 
     def save(self):

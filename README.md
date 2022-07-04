@@ -18,15 +18,12 @@ Join a guild voice channel. From a guild text channel, send `$join`. From here, 
 - Actually getting voice commands to work is a WIP.
 
 ## Running Silas
-I NEED TO UPDATE THIS - see requirements.txt
-After getting your own Discord bot token and making the code point at it, run `python3 main.py` to start the bot. To get the dependancies it'll complain about I recommend...
-1. Make a virtual environment: `python3 -m venv bot-env`
-2. Activate virtual environment: Linux `source bot-env/bin/activate`, Windows `bot-env\Scripts\activate.bat`
-3. Install dependancies: `pip install -U ...`
-- `discord.py`
-- `discord.py[voice]`
-- `youtube_dl`
-4. Install `ffmpeg` somewhere, I forget how.
+- Get a discord bot token: 
+  - Creating a bot account: https://docs.pycord.dev/en/master/discord.html
+  - A primer to Gateway intents: https://docs.pycord.dev/en/master/intents.html
+- Put your Discord bot token into `auth/discord.json`
+- Install the dependancies in `requirements.txt`
+- From within the virtual environment of the previous setup, run `python3 main.py`
 
 ## Bug reporting & feature requests
 If you find a bug in an implemented command or would like to request a new planned command, please file an Issue and label it appropriately.
