@@ -1,0 +1,15 @@
+These dependancy installation commands have only been tested on Ubuntu WSL inside of a virtual environment set up like below.
+cd your-bot-source
+python3 -m venv bot-env
+source bot-env/bin/activate
+
+https://docs.pycord.dev/en/master/installing.html
+pip install -U py-cord
+pip install -U py-cord[voice]
+apt install libffi-dev libnacl-dev python3-dev
+
+https://gtts.readthedocs.io/en/latest/
+pip install gTTS
+
+https://github.com/ytdl-org/youtube-dl
+pip install youtube-dl
