@@ -1,3 +1,4 @@
+# Import public libraries
 import discord
 import json
 
@@ -42,8 +43,9 @@ class MemberInfolette:
 
 class MemberInfo:
     def __init__(self):
+        # Recall and load previous session into memory
         self.participants = []
-        previous_session = json.load(open("member_info.json", "r"))
+        previous_session = json.load(open("helpers/member_info.json", "r"))
         for participant in previous_session:
             self.participants.append(MemberInfolette(\
                 participant["id"], \
@@ -105,9 +107,14 @@ class MemberInfo:
                 match += participant.id
         return match
 
+    # Overwrites previous member_info.json with new self.participants JSON
     def save(self):
         result = []
         for participant in self.participants:
             result.append(participant.to_json())
 
-        json.dump(result, open("member_info.json", "w"))
+        json.dump(result, open("helpers/member_info.json", "w"))
+
+# Create common instance
+# I plan to only support once voice_client and guild at a time
+info = MemberInfo()

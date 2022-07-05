@@ -17,3 +17,6 @@ pip install youtube-dl
 https://ffmpeg.org/
 I don't remember exactly how I did this one... I'll guess:
 apt install ffmpeg
+
+https://github.com/Uberi/speech_recognition
+pip install SpeechRecognition

@@ -7,20 +7,19 @@ import re
 import gtts
 from gtts import gTTS
 from io import BytesIO
-from youtube import YTDLSource
 
 #Import custom classes, etc
-import file_list
-from member_info import MemberInfo
-from FFmpegPCMAudio import FFmpegPCMAudio
+import helpers.file_list as file_list
+import helpers.bark as bark
+from helpers.youtube import YTDLSource
+from helpers.FFmpegPCMAudio import FFmpegPCMAudio
+from helpers.member_info import info
+from helpers.speech_to_text import incoming_audio_handler
 
 # Define logging
 logging.basicConfig(level=logging.INFO)
 # Define bot
 bot = commands.Bot(command_prefix="$")
-# Define my_member_info
-# I plan to only support once voice_client and guild at a time
-my_member_info = MemberInfo()
 
 #=================#
 # Define commands #
@@ -28,17 +27,6 @@ my_member_info = MemberInfo()
 #------------#
 # join/leave #
 #------------#
-#async def finished_callback(sink, channel: discord.TextChannel, *args):
-#    recorded_users = [f"<@{user_id}>" for user_id, audio in sink.audio_data.items()]
-#    #await sink.vc.disconnect()
-#    files = [
-#        discord.File(audio.file, f"{user_id}.{sink.encoding}")
-#        for user_id, audio in sink.audio_data.items()
-#    ]
-#    await channel.send(
-#        f"Finished! Recorded audio for {', '.join(recorded_users)}.", files=files
-#    )
-
 @bot.command()
 async def join(ctx):
     # Author must have a voice connection to join
@@ -51,12 +39,10 @@ async def join(ctx):
 
     voice_channel = ctx.author.voice.channel
     voice_client = await voice_channel.connect()
-    source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("./bark.mp3"))
-    voice_client.play(source)
+    voice_client.play(bark.normal)
 
     # Set up channels to listen to (only) those who have opted into voice commands
-    #sink = discord.WaveSink(users=opted_in_members, time=5, max_size=400)
-    #vc.start_recording(sink, finished_callback, None)
+    incoming_audio_handler.init(voice_channel)
 
 @bot.command()
 async def leave(ctx):
@@ -66,37 +52,38 @@ async def leave(ctx):
         return
 
     # TODO play exit sound, not sure how to wait for sound to finish to disconnect
-    #source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("./bark.mp3"))
-    #bot.voice_clients[0].play(source, after=lambda e:
+    #bot.voice_clients[0].play(bark.normal, after=lambda e:
     await bot.voice_clients[0].disconnect()#)
+    incoming_audio_handler.clean()
 
 #---------------#
 # listen/deafen #
 #---------------#
 @bot.command()
 async def listen(ctx):
-    my_infolette = my_member_info.get_infolette(ctx.author)
+    my_infolette = info.get_infolette(ctx.author)
     # Inform the member if they're already being listened to for voice commands
     if my_infolette.is_using_voice_commands == True:
         await ctx.send("I'm already listening for voice commands from you.")
         return
 
     my_infolette.is_using_voice_commands = True
-    my_member_info.add_infolette(my_infolette)
+    info.add_infolette(my_infolette)
+    incoming_audio_handler.on_opted_members_increased(ctx.author)
     await ctx.send("Ok, I'll start listening for voice commands from you now.")
 
 @bot.command()
 async def deafen(ctx):
-    my_infolette = my_member_info.get_infolette(ctx.author)
+    my_infolette = info.get_infolette(ctx.author)
     # Inform the member if their voice already isn't being listened to
     if my_infolette.is_using_voice_commands == False:
         await ctx.send("I'm already not listening to your voice.")
         return
 
     my_infolette.is_using_voice_commands = False
-    my_member_info.add_infolette(my_infolette)
+    info.add_infolette(my_infolette)
+    incoming_audio_handler.on_opted_members_decreased(ctx.author)
     await ctx.send("Ok, I'll start not listening to your voice.")
-
 
 #-----------#
 # play/stop #
@@ -132,7 +119,7 @@ async def tts(ctx, *, arg):
         return
 
     mp3 = BytesIO()
-    member_preferences = my_member_info.get_infolette(ctx.author)
+    member_preferences = info.get_infolette(ctx.author)
     if member_preferences.tts_accent != None:
         gTTS(text=(member_preferences.spoken_name + ": " + arg), \
             lang=member_preferences.tts_lang, \
@@ -149,10 +136,10 @@ async def tts(ctx, *, arg):
 async def tts_name(ctx, name):
     # TODO Regex for if name is reasonable?
     # Can't really do that for multi-language, just check length?
-    my_infolette = my_member_info.get_infolette(ctx.author)
+    my_infolette = info.get_infolette(ctx.author)
     my_infolette.spoken_name = name
     # Inform the member if they're already called by their desired name for TTS
-    if my_member_info.add_infolette(my_infolette) == False:
+    if info.add_infolette(my_infolette) == False:
         await ctx.send("I already call you " + name + " in TTS.")
         return
 
@@ -169,10 +156,10 @@ async def tts_lang(ctx, lang):
         await ctx.send(response)
         return
 
-    my_infolette = my_member_info.get_infolette(ctx.author)
+    my_infolette = info.get_infolette(ctx.author)
     my_infolette.tts_lang = lang
     # Inform the member if they're already using their desired TTS language
-    if my_member_info.add_infolette(my_infolette) == False:
+    if info.add_infolette(my_infolette) == False:
         await ctx.send("I already use " + lang + " for your TTS.")
         return
 
@@ -180,10 +167,10 @@ async def tts_lang(ctx, lang):
 
 @bot.command()
 async def tts_accent(ctx, accent=None):
-    my_infolette = my_member_info.get_infolette(ctx.author)
+    my_infolette = info.get_infolette(ctx.author)
     my_infolette.tts_accent = accent
     # Inform the member if they're already using their desired TTS accent
-    if my_member_info.add_infolette(my_infolette) == False:
+    if info.add_infolette(my_infolette) == False:
         await ctx.send("I already the accent " + (accent if accent != None else "NONE") + " for your TTS.")
         return
 

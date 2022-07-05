@@ -1,3 +1,8 @@
-member_info.json
-auth/*.json
-audio/*.mp3
+__pycache__
+helpers/__pycache__
+*.swp
+helpers/*.swp
+helpers/member_info.json
+auth/*
+audio/*
+bot_env/*
